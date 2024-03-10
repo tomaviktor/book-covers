@@ -81,7 +81,7 @@ class BookCovers(LightningDataModule):
     def prepare_data(self):
         dataset = load_dataset('tomaviktor/amazon-book-cover',
                                token=self.token,
-                               split='train[:1024]' if self.debug else None,
+                               split='train[:1024]' if self.debug else 'train',
                                cache_dir=self.cache_dir)
         dataset = DatasetDict({'train': dataset})
         train_size = len(dataset['train'])
