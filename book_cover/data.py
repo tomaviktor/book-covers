@@ -8,6 +8,8 @@ import torchvision.transforms as transforms
 def delete_alpha_chanel(x: torch.Tensor):
     if x.shape[0] > 3:
         return x[:3]
+    elif x.shape[0] < 3:
+        return torch.stack([x, x, x])
     return x
 
 
