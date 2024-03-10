@@ -53,7 +53,7 @@ class Preprocessing:
 
         images = torch.stack(images)
         labels = torch.stack(labels)
-        return {'images': images, 'labels': labels, 'titles': titles}
+        return {'pixel_values': images, 'labels': labels}
 
 
 class BookCovers(LightningDataModule):
