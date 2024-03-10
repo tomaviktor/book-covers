@@ -5,13 +5,16 @@ import torch
 import torchvision.transforms as transforms
 
 
-def permute_dimensions_and_delete_alpha_chanel(x: torch.Tensor):
-    if x.shape[0] > 3:
+def delete_alpha_chanel(x: torch.Tensor):
+    if x.shape[2] > 3:
         return x[:3]
-    x = x.permute(2, 1, 0)  # w, h, c -> c, h, w
-    if x.shape[0] < 3:
+    elif x.shape[2] < 3:
         return torch.stack([x, x, x])
     return x
+
+
+def permute_dimensions(x: torch.Tensor):
+    return x.permute(2, 1, 0)  # w, h, c -> c, h, w
 
 
 class Preprocessing:
@@ -21,16 +24,17 @@ class Preprocessing:
         self.grayscale = grayscale
         self.augmentation = augmentation
         t = [
-            permute_dimensions_and_delete_alpha_chanel,
-            transforms.Resize((image_size, image_size)),
+            delete_alpha_chanel,
+            permute_dimensions,
+            transforms.Resize((self.image_size, self.image_size)),
             transforms.ConvertImageDtype(torch.float)
         ]
-        if grayscale:
+        if self.grayscale:
             t.append(transforms.Grayscale())
         t.append(transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)))
-        if augmentation:
+        if self.augmentation:
             t = t + [transforms.RandomChoice([
-                transforms.RandomRotation((-10, 10), center=(image_size//2, image_size//2)),
+                transforms.RandomRotation((-10, 10), center=(self.image_size//2, self.image_size//2)),
                 transforms.RandomHorizontalFlip(p=0.5),
                 transforms.RandomVerticalFlip(p=0.5),
                 transforms.RandomErasing(p=0.1, scale=(0.1, 0.1)),
@@ -74,7 +78,11 @@ class BookCovers(LightningDataModule):
         self.cache_dir = cache_dir
         self.batch_size = batch_size
         self.dataset = None
-        self.preprocessing = Preprocessing(image_size=self.image_size, grayscale=self.grayscale, augmentation=augmentation)
+        self.preprocessing = Preprocessing(
+            image_size=self.image_size,
+            grayscale=self.grayscale,
+            augmentation=self.augmentation
+        )
 
     def prepare_data(self):
         dataset = load_dataset('tomaviktor/amazon-book-cover',
