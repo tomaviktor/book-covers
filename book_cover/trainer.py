@@ -85,7 +85,11 @@ def init_and_fit_trainer(
         debug=debug,
         cache_dir=cache_dir
     )
-    model = AutoModelForImageClassification.from_pretrained(config.model_name, num_labels=num_labels)
+    model = AutoModelForImageClassification.from_pretrained(
+        config.model_name,
+        num_labels=num_labels,
+        ignore_mismatched_sizes=True
+    )
     trainer_module = Trainer(model, config)
     logger = WandbLogger('book-covers')
     trainer = L.Trainer(
