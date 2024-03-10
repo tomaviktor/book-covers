@@ -21,5 +21,5 @@ class Accuracy(Metrics):
         predictions, labels = p
         predictions = np.argmax(predictions, axis=1)
 
-        results = self.metric.compute(predictions=predictions, references=labels)
+        results = self.metric.compute(predictions=predictions, references=labels.flatten())
         return results

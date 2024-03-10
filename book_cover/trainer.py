@@ -20,7 +20,7 @@ class Trainer(L.LightningModule):
     def training_step(self, batch, batch_idx):
         output = self.model(**batch)
         loss = output.loss
-        self.log("loss/train", loss.item(), batch_size=batch["input_ids"].shape[0])
+        self.log("loss/train", loss.item(), batch_size=batch["pixel_values"].shape[0])
         return loss
 
     def validation_step(self, batch, batch_idx):

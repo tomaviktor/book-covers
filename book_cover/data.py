@@ -92,7 +92,19 @@ class BookCovers(LightningDataModule):
         )
 
     def val_dataloader(self):
-        return DataLoader(self.dataset['validation'], shuffle=True, pin_memory=True, batch_size=16)
+        return DataLoader(
+            self.dataset['validation'],
+            shuffle=True,
+            pin_memory=True,
+            batch_size=16,
+            collate_fn=self.preprocessing.collate_fn
+        )
 
     def test_dataloader(self):
-        return DataLoader(self.dataset['test'], shuffle=True, pin_memory=True, batch_size=16)
+        return DataLoader(
+            self.dataset['test'],
+            shuffle=True,
+            pin_memory=True,
+            batch_size=16,
+            collate_fn=self.preprocessing.collate_fn
+        )
