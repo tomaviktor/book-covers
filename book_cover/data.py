@@ -5,16 +5,13 @@ import torch
 import torchvision.transforms as transforms
 
 
-def delete_alpha_chanel(x: torch.Tensor):
+def permute_dimensions_and_delete_alpha_chanel(x: torch.Tensor):
     if x.shape[0] > 3:
         return x[:3]
-    elif x.shape[0] < 3:
+    x = x.permute(2, 1, 0)  # w, h, c -> c, h, w
+    if x.shape[0] < 3:
         return torch.stack([x, x, x])
     return x
-
-
-def permute_dimensions(x: torch.Tensor):
-    return x.permute(2, 1, 0)  # w, h, c -> c, h, w
 
 
 class Preprocessing:
@@ -24,8 +21,7 @@ class Preprocessing:
         self.grayscale = grayscale
         self.augmentation = augmentation
         t = [
-            delete_alpha_chanel,
-            permute_dimensions,
+            permute_dimensions_and_delete_alpha_chanel,
             transforms.Resize((image_size, image_size)),
             transforms.ConvertImageDtype(torch.float)
         ]
