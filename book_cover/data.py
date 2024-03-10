@@ -6,6 +6,7 @@ import torchvision.transforms as transforms
 
 
 def delete_alpha_chanel(x: torch.Tensor):
+    print(x.shape)
     if x.shape[2] > 3:
         return x[:, :, :3]
     elif x.shape[2] < 3:
@@ -50,6 +51,7 @@ class Preprocessing:
         for datapoint in batch:
             labels.append(datapoint['label'])
             titles.append(datapoint['title'])
+            print(datapoint['title'])
             img = self.transform(datapoint['image'])
             images.append(img)
 
