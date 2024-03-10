@@ -116,6 +116,7 @@ def init_and_fit_trainer(
             config.grayscale,
             config.augmentation,
             config.debug,
-            config.cache_dir
+            config.cache_dir,
+            config.batch_size
         )
     )

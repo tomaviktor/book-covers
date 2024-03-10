@@ -57,7 +57,16 @@ class Preprocessing:
 
 
 class BookCovers(LightningDataModule):
-    def __init__(self, token: str = None, image_size: int = 256, grayscale: bool = False, augmentation: bool = False, debug: bool = False, cache_dir: str = None):
+    def __init__(
+            self,
+            token: str = None,
+            image_size: int = 256,
+            grayscale: bool = False,
+            augmentation: bool = False,
+            debug: bool = False,
+            cache_dir: str = None,
+            batch_size: int = 16
+    ):
         super(BookCovers, self).__init__()
         self.token = token
         self.image_size = image_size
@@ -65,6 +74,7 @@ class BookCovers(LightningDataModule):
         self.augmentation = augmentation
         self.debug = debug
         self.cache_dir = cache_dir
+        self.batch_size = batch_size
         self.dataset = None
         self.preprocessing = Preprocessing(image_size=self.image_size, grayscale=self.grayscale, augmentation=augmentation)
 
@@ -87,8 +97,9 @@ class BookCovers(LightningDataModule):
             self.dataset['train'],
             shuffle=True,
             pin_memory=True,
-            batch_size=16,
-            collate_fn=self.preprocessing.collate_fn
+            batch_size=self.batch_size,
+            collate_fn=self.preprocessing.collate_fn,
+            drop_last=True
         )
 
     def val_dataloader(self):
@@ -96,8 +107,9 @@ class BookCovers(LightningDataModule):
             self.dataset['validation'],
             shuffle=True,
             pin_memory=True,
-            batch_size=16,
-            collate_fn=self.preprocessing.collate_fn
+            batch_size=self.batch_size,
+            collate_fn=self.preprocessing.collate_fn,
+            drop_last=True
         )
 
     def test_dataloader(self):
@@ -105,6 +117,7 @@ class BookCovers(LightningDataModule):
             self.dataset['test'],
             shuffle=True,
             pin_memory=True,
-            batch_size=16,
-            collate_fn=self.preprocessing.collate_fn
+            batch_size=self.batch_size,
+            collate_fn=self.preprocessing.collate_fn,
+            drop_last=True
         )
