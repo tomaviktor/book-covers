@@ -96,10 +96,3 @@ class BookCovers(LightningDataModule):
 
     def test_dataloader(self):
         return DataLoader(self.dataset['test'], shuffle=True, pin_memory=True, batch_size=16)
-
-
-data = BookCovers(debug=True, augmentation=True)
-data.prepare_data()
-
-for batch_ in data.train_dataloader():
-    breakpoint()
