@@ -24,8 +24,8 @@ class Preprocessing:
         self.grayscale = grayscale
         self.augmentation = augmentation
         t = [
-            permute_dimensions,
             delete_alpha_chanel,
+            permute_dimensions,
             transforms.Resize((image_size, image_size)),
             transforms.ConvertImageDtype(torch.float)
         ]
