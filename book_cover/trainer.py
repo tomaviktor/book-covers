@@ -96,8 +96,6 @@ def init_and_fit_trainer(
         deterministic=True,
         accelerator=device,
         log_every_n_steps=10,
-        limit_train_batches=config.batch_size,
-        limit_val_batches=16,
         logger=logger,
         min_epochs=3,
         max_epochs=3,
