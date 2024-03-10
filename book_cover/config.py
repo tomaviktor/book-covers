@@ -67,6 +67,7 @@ class Config:
     grayscale: bool = False
     augmentation: bool = True
     debug: bool = False
+    cache_dir: str = None
 
     def dict(self):
         return asdict(self)

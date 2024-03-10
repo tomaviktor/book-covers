@@ -67,6 +67,8 @@ def init_and_fit_trainer(
         batch_size: int,
         learning_rate: float,
         seed: int = 0,
+        cache_dir: str = None,
+        device: str = 'gpu',
         num_labels: int = 207572,
         model_name: str = 'microsoft/resnet-50'
 ):
@@ -80,14 +82,15 @@ def init_and_fit_trainer(
         image_size=image_size,
         grayscale=grayscale,
         augmentation=augmentation,
-        debug=debug
+        debug=debug,
+        cache_dir=cache_dir
     )
     model = AutoModelForImageClassification.from_pretrained(config.model_name, num_labels=num_labels)
     trainer_module = Trainer(model, config)
     logger = WandbLogger('book-covers')
     trainer = L.Trainer(
         deterministic=True,
-        accelerator="gpu",
+        accelerator=device,
         log_every_n_steps=10,
         limit_train_batches=config.batch_size,
         limit_val_batches=16,
@@ -108,6 +111,7 @@ def init_and_fit_trainer(
             config.image_size,
             config.grayscale,
             config.augmentation,
-            config.debug
+            config.debug,
+            config.cache_dir
         )
     )

@@ -57,20 +57,22 @@ class Preprocessing:
 
 
 class BookCovers(LightningDataModule):
-    def __init__(self, token: str = None, image_size: int = 256, grayscale: bool = False, augmentation: bool = False, debug: bool = False):
+    def __init__(self, token: str = None, image_size: int = 256, grayscale: bool = False, augmentation: bool = False, debug: bool = False, cache_dir: str = None):
         super(BookCovers, self).__init__()
         self.token = token
         self.image_size = image_size
         self.grayscale = grayscale
         self.augmentation = augmentation
         self.debug = debug
+        self.cache_dir = cache_dir
         self.dataset = None
         self.preprocessing = Preprocessing(image_size=self.image_size, grayscale=self.grayscale, augmentation=augmentation)
 
     def prepare_data(self):
         dataset = load_dataset('tomaviktor/amazon-book-cover',
                                token=self.token,
-                               split='train[:1024]' if self.debug else None)
+                               split='train[:1024]' if self.debug else None,
+                               cache_dir=self.cache_dir)
         dataset = DatasetDict({'train': dataset})
         train_size = len(dataset['train'])
         dataset = dataset['train'].train_test_split(train_size=0.8, shuffle=True, seed=0)
