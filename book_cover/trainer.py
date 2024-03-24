@@ -8,7 +8,7 @@ from .data import BookCovers
 from lightning.pytorch.loggers import WandbLogger
 from lightning.pytorch.callbacks.lr_monitor import LearningRateMonitor
 from .resnet import ResNetForImageClassification
-from resnet import str_to_softmax
+from .resnet import str_to_softmax
 
 
 class Trainer(L.LightningModule):
