@@ -8,6 +8,7 @@ from .data import BookCovers
 from lightning.pytorch.loggers import WandbLogger
 from lightning.pytorch.callbacks.lr_monitor import LearningRateMonitor
 from .resnet import ResNetForImageClassification
+from resnet import str_to_softmax
 
 
 class Trainer(L.LightningModule):
@@ -29,6 +30,7 @@ class Trainer(L.LightningModule):
         output = self.model(**batch)
         loss = output.loss
         logits = output.logits
+        logits = str_to_softmax[self.config.softmax_function](logits, dim=-1)
 
         self.validation_step_outputs["labels"].append(batch["labels"].detach().cpu().numpy())
         self.validation_step_outputs["logits"].append(logits.detach().cpu().numpy())

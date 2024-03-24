@@ -3,11 +3,12 @@ import torch.nn as nn
 from transformers.models.resnet.modeling_resnet import \
     ResNetPreTrainedModel, ResNetModel, ImageClassifierOutputWithNoAttention
 from typing import Optional
-from entmax import sparsemax_loss, entmax15_loss
-from torch.nn.functional import cross_entropy
+from entmax import sparsemax_loss, entmax15_loss, entmax15, sparsemax
+from torch.nn.functional import cross_entropy, softmax
 
 
 str_to_loss = {'sparsemax': sparsemax_loss, 'entmax15': entmax15_loss, 'softmax': cross_entropy}
+str_to_softmax = {'sparsemax': sparsemax, 'entmax15': entmax15, 'softmax': softmax}
 
 
 class ResNetForImageClassification(ResNetPreTrainedModel):
