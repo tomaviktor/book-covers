@@ -57,7 +57,6 @@ class Preprocessing:
 
         images = torch.stack(images)
         labels = torch.stack(labels)
-        print(labels)
         return {'pixel_values': images, 'labels': labels}
 
 

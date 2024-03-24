@@ -6,6 +6,7 @@ from .metric import Accuracy
 from transformers import AutoModelForImageClassification
 from .data import BookCovers
 from lightning.pytorch.loggers import WandbLogger
+from lightning.pytorch.callbacks.lr_monitor import LearningRateMonitor
 
 
 class Trainer(L.LightningModule):
@@ -127,7 +128,8 @@ def init_and_fit_trainer(
         enable_model_summary=True,
         enable_progress_bar=True,
         gradient_clip_val=10.0,
-        check_val_every_n_epoch=1
+        check_val_every_n_epoch=1,
+        callbacks=[LearningRateMonitor(logging_interval="step")]
     )
     trainer.fit(
         trainer_module,
