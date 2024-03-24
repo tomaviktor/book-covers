@@ -7,8 +7,8 @@ from transformers import AutoModelForImageClassification
 from .data import BookCovers
 from lightning.pytorch.loggers import WandbLogger
 from lightning.pytorch.callbacks.lr_monitor import LearningRateMonitor
-from .resnet import ResNetForImageClassification
-from .resnet import str_to_softmax
+from .resnet import ResNetForImageClassification, str_to_softmax
+import datetime
 
 
 class Trainer(L.LightningModule):
@@ -121,7 +121,7 @@ def init_and_fit_trainer(
     )
     model.config.softmax_function = config.softmax_function
     trainer_module = Trainer(model, config)
-    logger = WandbLogger('book-covers')
+    logger = WandbLogger(project='book-covers', name='book-covers_' + datetime.datetime.now().isoformat())
     trainer = L.Trainer(
         deterministic=False,
         accelerator=device,
