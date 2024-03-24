@@ -7,6 +7,7 @@ from transformers import AutoModelForImageClassification
 from .data import BookCovers
 from lightning.pytorch.loggers import WandbLogger
 from lightning.pytorch.callbacks.lr_monitor import LearningRateMonitor
+from .resnet import ResNetForImageClassification
 
 
 class Trainer(L.LightningModule):
@@ -84,7 +85,8 @@ def init_and_fit_trainer(
         cache_dir: str = None,
         device: str = 'gpu',
         num_labels: int = 207572,
-        model_name: str = 'microsoft/resnet-50'
+        model_name: str = 'microsoft/resnet-50',
+        softmax_function: str = 'softmax'
 ):
     L.seed_everything(seed)
     config = Config(
@@ -97,7 +99,8 @@ def init_and_fit_trainer(
         grayscale=grayscale,
         augmentation=augmentation,
         debug=debug,
-        cache_dir=cache_dir
+        cache_dir=cache_dir,
+        softmax_function=softmax_function
     )
     dataset = BookCovers(
         config.token,
@@ -109,10 +112,11 @@ def init_and_fit_trainer(
         config.batch_size
     )
     config.steps_per_epoch = len(dataset) // config.batch_size
-    model = AutoModelForImageClassification.from_pretrained(
+    model = ResNetForImageClassification.from_pretrained(
         config.model_name,
         num_labels=num_labels,
-        ignore_mismatched_sizes=True
+        ignore_mismatched_sizes=True,
+        softmax_function=config.softmax_function
     )
     trainer_module = Trainer(model, config)
     logger = WandbLogger('book-covers')

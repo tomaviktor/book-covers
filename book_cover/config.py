@@ -1,6 +1,7 @@
 from dataclasses import dataclass, asdict, is_dataclass
 import copy
 import inspect
+from typing import Literal
 
 
 class TypeDict(dict):
@@ -72,6 +73,7 @@ class Config:
     perc_warmup_steps: float = 0.3
     steps_per_epoch: int = None
     initial_learning_rate: float = 0.0
+    softmax_function: Literal['sparsemax', 'entmax15', 'softmax'] = 'softmax'
 
     def dict(self):
         return asdict(self)
