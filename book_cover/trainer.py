@@ -9,6 +9,7 @@ from lightning.pytorch.loggers import WandbLogger
 from lightning.pytorch.callbacks.lr_monitor import LearningRateMonitor
 from .resnet import ResNetForImageClassification, str_to_softmax
 import datetime
+import wandb
 
 
 class Trainer(L.LightningModule):
@@ -141,3 +142,4 @@ def init_and_fit_trainer(
         trainer_module,
         datamodule=dataset
     )
+    wandb.finish()
