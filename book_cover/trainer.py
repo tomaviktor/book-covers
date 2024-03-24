@@ -121,7 +121,7 @@ def init_and_fit_trainer(
     trainer_module = Trainer(model, config)
     logger = WandbLogger('book-covers')
     trainer = L.Trainer(
-        deterministic=True,
+        deterministic=False,
         accelerator=device,
         log_every_n_steps=10,
         logger=logger,
