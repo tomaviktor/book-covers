@@ -68,6 +68,9 @@ class Config:
     augmentation: bool = True
     debug: bool = False
     cache_dir: str = None
+    num_epochs: int = 3
+    perc_warmup_steps: float = 0.3
+    steps_per_epoch: int = None
 
     def dict(self):
         return asdict(self)

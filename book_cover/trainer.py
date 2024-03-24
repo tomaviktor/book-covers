@@ -55,7 +55,20 @@ class Trainer(L.LightningModule):
 
     def configure_optimizers(self):
         optimizer = torch.optim.AdamW(self.parameters(), lr=self.config.learning_rate, betas=self.config.betas)
-        return {"optimizer": optimizer}
+        scheduler = torch.optim.lr_scheduler.OneCycleLR(
+            optimizer,
+            max_lr=self.config.learning_rate,
+            epochs=self.config.num_epochs,
+            steps_per_epoch=self.config.steps_per_epoch,
+            pct_start=self.config.perc_warmup_steps,
+            anneal_strategy="cos",
+        )
+        lr_scheduler_config = {
+            "scheduler": scheduler,
+            "interval": "step",
+            "frequency": 1
+        }
+        return {"optimizer": optimizer, "lr_scheduler": lr_scheduler_config}
 
 
 def init_and_fit_trainer(
@@ -85,6 +98,16 @@ def init_and_fit_trainer(
         debug=debug,
         cache_dir=cache_dir
     )
+    dataset = BookCovers(
+        config.token,
+        config.image_size,
+        config.grayscale,
+        config.augmentation,
+        config.debug,
+        config.cache_dir,
+        config.batch_size
+    )
+    config.steps_per_epoch = len(dataset) // config.batch_size
     model = AutoModelForImageClassification.from_pretrained(
         config.model_name,
         num_labels=num_labels,
@@ -97,8 +120,8 @@ def init_and_fit_trainer(
         accelerator=device,
         log_every_n_steps=10,
         logger=logger,
-        min_epochs=3,
-        max_epochs=3,
+        min_epochs=config.num_epochs,
+        max_epochs=config.num_epochs,
         accumulate_grad_batches=1,
         enable_checkpointing=True,
         enable_model_summary=True,
@@ -108,13 +131,5 @@ def init_and_fit_trainer(
     )
     trainer.fit(
         trainer_module,
-        datamodule=BookCovers(
-            config.token,
-            config.image_size,
-            config.grayscale,
-            config.augmentation,
-            config.debug,
-            config.cache_dir,
-            config.batch_size
-        )
+        datamodule=dataset
     )

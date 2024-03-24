@@ -87,19 +87,25 @@ class BookCovers(LightningDataModule):
             augmentation=self.augmentation
         )
 
+    def __len__(self):
+        if self.dataset is None:
+            self.prepare_data()
+        return len(self.dataset['train'])
+
     def prepare_data(self):
-        dataset = load_dataset('tomaviktor/amazon-book-cover',
-                               token=self.token,
-                               split='train[:1024]' if self.debug else 'train',
-                               cache_dir=self.cache_dir)
-        dataset = DatasetDict({'train': dataset})
-        train_size = len(dataset['train'])
-        dataset = dataset['train'].train_test_split(train_size=0.8, shuffle=True, seed=0)
-        ds = dataset['train'].train_test_split(train_size=int(train_size*0.7), shuffle=True, seed=0)
-        dataset['train'] = ds['train']
-        dataset['validation'] = ds['test']
-        dataset.set_format('torch')
-        self.dataset = dataset
+        if self.dataset is None:
+            dataset = load_dataset('tomaviktor/amazon-book-cover',
+                                   token=self.token,
+                                   split='train[:1024]' if self.debug else 'train',
+                                   cache_dir=self.cache_dir)
+            dataset = DatasetDict({'train': dataset})
+            train_size = len(dataset['train'])
+            dataset = dataset['train'].train_test_split(train_size=0.8, shuffle=True, seed=0)
+            ds = dataset['train'].train_test_split(train_size=int(train_size*0.7), shuffle=True, seed=0)
+            dataset['train'] = ds['train']
+            dataset['validation'] = ds['test']
+            dataset.set_format('torch')
+            self.dataset = dataset
 
     def train_dataloader(self):
         return DataLoader(
