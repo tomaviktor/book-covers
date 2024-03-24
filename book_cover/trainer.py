@@ -54,7 +54,7 @@ class Trainer(L.LightningModule):
                 self.log(f"metrics/{key}", value)
 
     def configure_optimizers(self):
-        optimizer = torch.optim.AdamW(self.parameters(), lr=self.config.learning_rate, betas=self.config.betas)
+        optimizer = torch.optim.AdamW(self.parameters(), lr=self.config.initial_learning_rate, betas=self.config.betas)
         scheduler = torch.optim.lr_scheduler.OneCycleLR(
             optimizer,
             max_lr=self.config.learning_rate,

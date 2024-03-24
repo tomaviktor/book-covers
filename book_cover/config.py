@@ -71,6 +71,7 @@ class Config:
     num_epochs: int = 3
     perc_warmup_steps: float = 0.3
     steps_per_epoch: int = None
+    initial_learning_rate: float = 0.0
 
     def dict(self):
         return asdict(self)
