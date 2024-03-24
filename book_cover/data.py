@@ -33,7 +33,7 @@ class Preprocessing:
         ]
         if self.grayscale:
             t.append(transforms.Grayscale())
-        t.append(transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)))
+        t.append(transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)))  # (0.485, 0.456, 0.406), (0.229, 0.224, 0.225)
         if self.augmentation:
             t = t + [transforms.RandomChoice([
                 transforms.RandomRotation((-10, 10), center=(self.image_size//2, self.image_size//2)),
@@ -57,6 +57,7 @@ class Preprocessing:
 
         images = torch.stack(images)
         labels = torch.stack(labels)
+        print(labels)
         return {'pixel_values': images, 'labels': labels}
 
 
