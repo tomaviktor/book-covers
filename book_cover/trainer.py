@@ -115,9 +115,9 @@ def init_and_fit_trainer(
     model = ResNetForImageClassification.from_pretrained(
         config.model_name,
         num_labels=num_labels,
-        ignore_mismatched_sizes=True,
-        softmax_function=config.softmax_function
+        ignore_mismatched_sizes=True
     )
+    model.config.softmax_function = config.softmax_function
     trainer_module = Trainer(model, config)
     logger = WandbLogger('book-covers')
     trainer = L.Trainer(
