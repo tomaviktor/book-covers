@@ -43,6 +43,8 @@ class ResNetForImageClassification(ResNetPreTrainedModel):
         if labels is not None:
             loss_fct = str_to_loss[self.config.softmax_function]
             loss = loss_fct(logits.view(-1, self.num_labels), labels.view(-1))
+            if self.config.softmax_function in ['entmax15', 'sparsemax']:
+                loss = loss.mean()
 
         if not return_dict:
             output = (logits,) + outputs[2:]
