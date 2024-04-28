@@ -19,8 +19,13 @@ class ResNetForImageClassification(ResNetPreTrainedModel):
         # classification head
         self.classifier = nn.Sequential(
             nn.Flatten(),
+            nn.Linear(config.hidden_sizes[-1], config.hidden_sizes[-1]),
             nn.Linear(config.hidden_sizes[-1], config.num_labels) if config.num_labels > 0 else nn.Identity(),
         )
+        for module in self.classifier._modules.values():
+            with torch.no_grad():
+                if isinstance(module, nn.Linear):
+                    module.weight.data.normal_(mean=0, std=0.02)
         # initialize weights and apply final processing
         self.post_init()
 

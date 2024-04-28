@@ -52,7 +52,7 @@ class Preprocessing:
         for datapoint in batch:
             labels.append(datapoint['label'])
             titles.append(datapoint['title'])
-            img = self.transform(datapoint['image'].convert("RGB"))
+            img = self.transform(datapoint['image'])
             images.append(img)
 
         images = torch.stack(images)
@@ -98,6 +98,12 @@ class BookCovers(LightningDataModule):
                                    split='train[:1024]' if self.debug else 'train',
                                    cache_dir=self.cache_dir)
             dataset = DatasetDict({'train': dataset})
+
+            def to_rgb(examples):
+                examples["image"] = [x.convert("RGB") for x in examples["image"]]
+                return examples
+
+            dataset = dataset.map(to_rgb, batched=True)
             train_size = len(dataset['train'])
             dataset = dataset['train'].train_test_split(train_size=0.8, shuffle=True, seed=0)
             ds = dataset['train'].train_test_split(train_size=int(train_size*0.7), shuffle=True, seed=0)
