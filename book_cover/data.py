@@ -33,7 +33,6 @@ class Preprocessing:
         ]
         if self.grayscale:
             t.append(transforms.Grayscale())
-        t.append(transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)))  # (0.485, 0.456, 0.406), (0.229, 0.224, 0.225)
         if self.augmentation:
             t = t + [transforms.RandomChoice([
                 transforms.RandomRotation((-10, 10), center=(self.image_size//2, self.image_size//2)),
@@ -42,6 +41,7 @@ class Preprocessing:
                 transforms.RandomErasing(p=0.1, scale=(0.1, 0.1)),
                 transforms.RandomPerspective(distortion_scale=0.3, p=0.5)
             ], p=(1, 1, 1, 1, 1))]
+        t.append(transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)))
         self.transform = transforms.Compose(t)
 
     def collate_fn(self, batch):
@@ -52,7 +52,7 @@ class Preprocessing:
         for datapoint in batch:
             labels.append(datapoint['label'])
             titles.append(datapoint['title'])
-            img = self.transform(datapoint['image'])
+            img = self.transform(datapoint['image'].convert("RGB"))
             images.append(img)
 
         images = torch.stack(images)

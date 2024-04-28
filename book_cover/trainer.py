@@ -89,7 +89,8 @@ def init_and_fit_trainer(
         device: str = 'gpu',
         num_labels: int = 207572,
         model_name: str = 'microsoft/resnet-50',
-        softmax_function: str = 'softmax'
+        softmax_function: str = 'softmax',
+        deterministic: bool = True
 ):
     L.seed_everything(seed)
     config = Config(
@@ -115,6 +116,8 @@ def init_and_fit_trainer(
         config.batch_size
     )
     config.steps_per_epoch = len(dataset) // config.batch_size
+    config.deterministic = deterministic
+
     model = ResNetForImageClassification.from_pretrained(
         config.model_name,
         num_labels=num_labels,
@@ -124,7 +127,7 @@ def init_and_fit_trainer(
     trainer_module = Trainer(model, config)
     logger = WandbLogger(project='book-covers', name='book-covers_' + datetime.datetime.now().isoformat())
     trainer = L.Trainer(
-        deterministic=False,
+        deterministic=config.deterministic,
         accelerator=device,
         log_every_n_steps=10,
         logger=logger,

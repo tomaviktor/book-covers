@@ -74,6 +74,7 @@ class Config:
     steps_per_epoch: int = None
     initial_learning_rate: float = 0.0
     softmax_function: Literal['sparsemax', 'entmax15', 'softmax'] = 'softmax'
+    deterministic: bool = True
 
     def dict(self):
         return asdict(self)
